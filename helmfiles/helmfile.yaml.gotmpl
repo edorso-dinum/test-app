@@ -1,0 +1,10 @@
+releases:
+  # installation du helm nginx
+  - name: helm-nginx
+    namespace: {{ .Values | get "data.namespace" (.Values | get "namespace" "default") }}
+    chart: ../helm/nginx
+    version: {{ .Values | get "nginx.version" "latest" }}
+    installed: {{ .Values | get "nginx.installed" true }}
+    missingFileHandler: Warn
+    values:
+      - ./nginx-values.yaml.gotmpl
