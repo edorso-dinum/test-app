@@ -52,4 +52,15 @@ readinessProbe:
   initialDelaySeconds: 2
   periodSeconds: 5
 
+nodeSelector:
+  node-role.kubernetes.io/control-plane: ""
+
+tolerations:
+  - key: node-role.kubernetes.io/control-plane
+    operator: Exists
+    effect: NoSchedule
+  - key: node-role.kubernetes.io/master
+    operator: Exists
+    effect: NoSchedule
+
 affinity: {}
