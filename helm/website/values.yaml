@@ -72,9 +72,9 @@ django:
 # standard keys: host, port, dbname, user, password.
 postgresql:
   premierRoles:
-    existingSecret: "premier-roles-app"
+    existingSecret: "cnpg-cluster-tchap-pgbench-app"
   doublures:
-    existingSecret: "doublures-app"
+    existingSecret: "cnpg-cluster-tchap-pgbench-app"
 
 # Migration Job(s) loading the seed data from `data/*.sql` into the CNPG databases,
 # run as Helm hooks before the website Deployment is (re)installed/upgraded.
