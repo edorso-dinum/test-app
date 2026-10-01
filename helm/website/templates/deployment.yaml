@@ -30,6 +30,59 @@ spec:
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- $dbEnv := list
+            (dict "name" "PREMIER_ROLES_DB_NAME" "value" .Values.postgresql.premierRoles.dbName)
+            (dict "name" "PREMIER_ROLES_DB_USER" "secretName" .Values.postgresql.premierRoles.roleExistingSecret "secretKey" "username")
+            (dict "name" "PREMIER_ROLES_DB_PASSWORD" "secretName" .Values.postgresql.premierRoles.roleExistingSecret "secretKey" "password")
+            (dict "name" "PREMIER_ROLES_DB_HOST" "value" .Values.postgresql.host)
+            (dict "name" "PREMIER_ROLES_DB_PORT" "value" (.Values.postgresql.port | toString))
+            (dict "name" "DOUBLURES_DB_NAME" "value" .Values.postgresql.doublures.dbName)
+            (dict "name" "DOUBLURES_DB_USER" "secretName" .Values.postgresql.doublures.roleExistingSecret "secretKey" "username")
+            (dict "name" "DOUBLURES_DB_PASSWORD" "secretName" .Values.postgresql.doublures.roleExistingSecret "secretKey" "password")
+            (dict "name" "DOUBLURES_DB_HOST" "value" .Values.postgresql.host)
+            (dict "name" "DOUBLURES_DB_PORT" "value" (.Values.postgresql.port | toString))
+      }}
+      initContainers:
+        - name: migrate-premier-roles
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["python", "manage.py", "migrate", "--database=premier_roles", "--noinput"]
+          env:
+            {{- range $dbEnv }}
+            - name: {{ .name }}
+              {{- if .secretName }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .secretName }}
+                  key: {{ .secretKey }}
+              {{- else }}
+              value: {{ .value | quote }}
+              {{- end }}
+            {{- end }}
+        - name: migrate-doublures
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["python", "manage.py", "migrate", "--database=doublures", "--noinput"]
+          env:
+            {{- range $dbEnv }}
+            - name: {{ .name }}
+              {{- if .secretName }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .secretName }}
+                  key: {{ .secretKey }}
+              {{- else }}
+              value: {{ .value | quote }}
+              {{- end }}
+            {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           {{- with .Values.securityContext }}
@@ -54,38 +107,17 @@ spec:
                   name: {{ .Values.django.secretKeyExistingSecret }}
                   key: {{ .Values.django.secretKeyExistingSecretKey }}
             {{- end }}
-            - name: PREMIER_ROLES_DB_NAME
-              value: "{{ .Values.postgresql.premierRoles.dbName }}"
-            - name: PREMIER_ROLES_DB_USER
+            {{- range $dbEnv }}
+            - name: {{ .name }}
+              {{- if .secretName }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.postgresql.premierRoles.roleExistingSecret }}
-                  key: username
-            - name: PREMIER_ROLES_DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.postgresql.premierRoles.roleExistingSecret }}
-                  key: password
-            - name: PREMIER_ROLES_DB_HOST
-              valueFrom: "{{ .Values.postgresql.host }}"
-            - name: PREMIER_ROLES_DB_PORT
-              valueFrom: "{{ .Values.postgresql.port }}"
-            - name: DOUBLURES_DB_NAME
-              value: "{{ .Values.postgresql.doublures.dbName }}"
-            - name: DOUBLURES_DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.postgresql.doublures.roleExistingSecret }}
-                  key: username
-            - name: DOUBLURES_DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.postgresql.doublures.roleExistingSecret }}
-                  key: password
-            - name: DOUBLURES_DB_HOST
-              value: "{{ .Values.postgresql.host }}"
-            - name: DOUBLURES_DB_PORT
-              value: "{{ .Values.postgresql.port }}"
+                  name: {{ .secretName }}
+                  key: {{ .secretKey }}
+              {{- else }}
+              value: {{ .value | quote }}
+              {{- end }}
+            {{- end }}
           {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}

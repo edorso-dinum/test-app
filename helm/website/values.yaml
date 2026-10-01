@@ -79,13 +79,3 @@ postgresql:
   doublures:
     roleExistingSecret: "tchap-pgbench-doublures-secret"
     dbName: "doublures"
-
-# Migration Job(s) loading the seed data from `data/*.sql` into the CNPG databases,
-# run as Helm hooks before the website Deployment is (re)installed/upgraded.
-migration:
-  enabled: true
-  image:
-    repository: postgres
-    tag: "16-alpine"
-    pullPolicy: IfNotPresent
-  resources: {}
