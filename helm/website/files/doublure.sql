@@ -1,10 +1,11 @@
-CREATE DATABASE IF NOT EXISTS doublures;
-USE doublures;
-
-CREATE TABLE doublure_names (
+-- Expects to be run against the `doublures` PostgreSQL database
+-- (provisioned by the CNPG cluster), e.g. `psql -d doublures -f doublure.sql`.
+CREATE TABLE IF NOT EXISTS doublure_names (
     firstname VARCHAR(50) NOT NULL,
     name VARCHAR(50) NOT NULL
 );
+
+TRUNCATE TABLE doublure_names;
 
 INSERT INTO doublure_names (firstname, name) VALUES
     ('Christopher', 'Cook'),

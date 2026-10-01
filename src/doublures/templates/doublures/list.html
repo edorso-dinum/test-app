@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Doublures{% endblock %}
+
+{% block content %}
+    <h1>Doublures</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>First name</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for doublure in doublures %}
+                <tr>
+                    <td>{{ doublure.firstname }}</td>
+                    <td>{{ doublure.name }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="2">No doublure found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

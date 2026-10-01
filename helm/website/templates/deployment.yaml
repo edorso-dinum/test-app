@@ -1,0 +1,130 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "website.fullname" . }}
+  namespace: {{ include "website.namespace" . | quote }}
+  labels:
+    {{- include "website.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "website.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "website.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.targetPort | default .Values.service.port }}
+              protocol: TCP
+          env:
+            - name: DJANGO_ALLOWED_HOSTS
+              value: {{ .Values.django.allowedHosts | quote }}
+            - name: DJANGO_DEBUG
+              value: {{ .Values.django.debug | quote }}
+            {{- if .Values.django.secretKeyExistingSecret }}
+            - name: DJANGO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.django.secretKeyExistingSecret }}
+                  key: {{ .Values.django.secretKeyExistingSecretKey }}
+            {{- end }}
+            - name: PREMIER_ROLES_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.premierRoles.existingSecret }}
+                  key: dbname
+            - name: PREMIER_ROLES_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.premierRoles.existingSecret }}
+                  key: user
+            - name: PREMIER_ROLES_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.premierRoles.existingSecret }}
+                  key: password
+            - name: PREMIER_ROLES_DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.premierRoles.existingSecret }}
+                  key: host
+            - name: PREMIER_ROLES_DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.premierRoles.existingSecret }}
+                  key: port
+            - name: DOUBLURES_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.doublures.existingSecret }}
+                  key: dbname
+            - name: DOUBLURES_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.doublures.existingSecret }}
+                  key: user
+            - name: DOUBLURES_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.doublures.existingSecret }}
+                  key: password
+            - name: DOUBLURES_DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.doublures.existingSecret }}
+                  key: host
+            - name: DOUBLURES_DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.doublures.existingSecret }}
+                  key: port
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

@@ -1,10 +1,11 @@
-CREATE DATABASE IF NOT EXISTS premier_roles;
-USE premier_roles;
-
-CREATE TABLE role_names (
+-- Expects to be run against the `premier_roles` PostgreSQL database
+-- (provisioned by the CNPG cluster), e.g. `psql -d premier_roles -f premier_roles.sql`.
+CREATE TABLE IF NOT EXISTS role_names (
     firstname VARCHAR(50) NOT NULL,
     name VARCHAR(50) NOT NULL
 );
+
+TRUNCATE TABLE role_names;
 
 INSERT INTO role_names (firstname, name) VALUES
     ('Ryan', 'Roberts'),

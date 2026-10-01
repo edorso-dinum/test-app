@@ -1,0 +1,127 @@
+{{- if .Values.migration.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "website.fullname" . }}-migrate-premier-roles
+  namespace: {{ include "website.namespace" . | quote }}
+  labels:
+    {{- include "website.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        {{- include "website.selectorLabels" . | nindent 8 }}
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate-premier-roles
+          image: "{{ .Values.migration.image.repository }}:{{ .Values.migration.image.tag }}"
+          imagePullPolicy: {{ .Values.migration.image.pullPolicy }}
+          command: ["psql", "-v", "ON_ERROR_STOP=1", "-f", "/sql/premier_roles.sql"]
+          env:
+            - name: PGHOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.premierRoles.existingSecret }}
+                  key: host
+            - name: PGPORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.premierRoles.existingSecret }}
+                  key: port
+            - name: PGDATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.premierRoles.existingSecret }}
+                  key: dbname
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.premierRoles.existingSecret }}
+                  key: user
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.premierRoles.existingSecret }}
+                  key: password
+          volumeMounts:
+            - name: migration-sql
+              mountPath: /sql
+              readOnly: true
+          {{- with .Values.migration.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      volumes:
+        - name: migration-sql
+          configMap:
+            name: {{ include "website.fullname" . }}-migration-sql
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "website.fullname" . }}-migrate-doublures
+  namespace: {{ include "website.namespace" . | quote }}
+  labels:
+    {{- include "website.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        {{- include "website.selectorLabels" . | nindent 8 }}
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate-doublures
+          image: "{{ .Values.migration.image.repository }}:{{ .Values.migration.image.tag }}"
+          imagePullPolicy: {{ .Values.migration.image.pullPolicy }}
+          command: ["psql", "-v", "ON_ERROR_STOP=1", "-f", "/sql/doublure.sql"]
+          env:
+            - name: PGHOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.doublures.existingSecret }}
+                  key: host
+            - name: PGPORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.doublures.existingSecret }}
+                  key: port
+            - name: PGDATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.doublures.existingSecret }}
+                  key: dbname
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.doublures.existingSecret }}
+                  key: user
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.doublures.existingSecret }}
+                  key: password
+          volumeMounts:
+            - name: migration-sql
+              mountPath: /sql
+              readOnly: true
+          {{- with .Values.migration.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      volumes:
+        - name: migration-sql
+          configMap:
+            name: {{ include "website.fullname" . }}-migration-sql
+{{- end }}

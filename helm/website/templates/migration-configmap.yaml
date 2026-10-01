@@ -1,0 +1,18 @@
+{{- if .Values.migration.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "website.fullname" . }}-migration-sql
+  namespace: {{ include "website.namespace" . | quote }}
+  labels:
+    {{- include "website.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation
+data:
+  premier_roles.sql: |-
+{{ .Files.Get "files/premier_roles.sql" | indent 4 }}
+  doublure.sql: |-
+{{ .Files.Get "files/doublure.sql" | indent 4 }}
+{{- end }}

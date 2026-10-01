@@ -2,3 +2,7 @@
 dist/
 build/
 *.tgz
+.venv/
+__pycache__/
+*.pyc
+src/db.sqlite3

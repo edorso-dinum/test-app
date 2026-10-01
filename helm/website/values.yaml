@@ -1,0 +1,87 @@
+replicaCount: 1
+
+image:
+  repository: registry.example.org/test-app/website
+  pullPolicy: IfNotPresent
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+namespaceOverride: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  seccompProfile:
+    type: RuntimeDefault
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+
+resources: {}
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: 8000
+  initialDelaySeconds: 5
+  periodSeconds: 10
+readinessProbe:
+  httpGet:
+    path: /
+    port: 8000
+  initialDelaySeconds: 2
+  periodSeconds: 5
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+django:
+  # DJANGO_ALLOWED_HOSTS
+  allowedHosts: "*"
+  # DJANGO_DEBUG
+  debug: false
+  # Name of a pre-existing Secret holding the Django SECRET_KEY. Leave empty to use the built-in default.
+  secretKeyExistingSecret: ""
+  secretKeyExistingSecretKey: "django-secret-key"
+
+# Connection info for the two databases hosted by the (already deployed) CNPG cluster.
+# `existingSecret` is expected to be a CNPG-generated "app" Secret, exposing the
+# standard keys: host, port, dbname, user, password.
+postgresql:
+  premierRoles:
+    existingSecret: "premier-roles-app"
+  doublures:
+    existingSecret: "doublures-app"
+
+# Migration Job(s) loading the seed data from `data/*.sql` into the CNPG databases,
+# run as Helm hooks before the website Deployment is (re)installed/upgraded.
+migration:
+  enabled: true
+  image:
+    repository: postgres
+    tag: "16-alpine"
+    pullPolicy: IfNotPresent
+  resources: {}

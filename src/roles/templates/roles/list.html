@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Premier roles{% endblock %}
+
+{% block content %}
+    <h1>Premier roles</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>First name</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for premier_role in premier_roles %}
+                <tr>
+                    <td>{{ premier_role.firstname }}</td>
+                    <td>{{ premier_role.name }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="2">No premier role found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -8,3 +8,13 @@ releases:
     missingFileHandler: Warn
     values:
       - ./nginx-values.yaml.gotmpl
+
+  # installation du helm website
+  - name: helm-website
+    namespace: {{ .Values | get "data.namespace" (.Values | get "namespace" "default") }}
+    chart: ../helm/website
+    version: {{ .Values | get "website.version" "latest" }}
+    installed: {{ .Values | get "website.installed" true }}
+    missingFileHandler: Warn
+    values:
+      - ./website-values.yaml.gotmpl
