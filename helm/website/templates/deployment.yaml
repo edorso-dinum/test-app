@@ -55,7 +55,7 @@ spec:
                   key: {{ .Values.django.secretKeyExistingSecretKey }}
             {{- end }}
             - name: PREMIER_ROLES_DB_NAME
-              value: {{ .Values.postgresql.premierRoles.dbName }}
+              value: "{{ .Values.postgresql.premierRoles.dbName }}"
             - name: PREMIER_ROLES_DB_USER
               valueFrom:
                 secretKeyRef:
@@ -67,11 +67,11 @@ spec:
                   name: {{ .Values.postgresql.premierRoles.roleExistingSecret }}
                   key: password
             - name: PREMIER_ROLES_DB_HOST
-              valueFrom: {{ .Values.postgresql.host }}
+              valueFrom: "{{ .Values.postgresql.host }}"
             - name: PREMIER_ROLES_DB_PORT
-              valueFrom: {{ .Values.postgresql.port }}
+              valueFrom: "{{ .Values.postgresql.port }}"
             - name: DOUBLURES_DB_NAME
-              value: {{ .Values.postgresql.doublures.dbName }}
+              value: "{{ .Values.postgresql.doublures.dbName }}"
             - name: DOUBLURES_DB_USER
               valueFrom:
                 secretKeyRef:
@@ -80,12 +80,12 @@ spec:
             - name: DOUBLURES_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.postgresql.doublures.existingSecret }}
+                  name: {{ .Values.postgresql.doublures.roleExistingSecret }}
                   key: password
             - name: DOUBLURES_DB_HOST
-              value: {{ .Values.postgresql.host }}
+              value: "{{ .Values.postgresql.host }}"
             - name: DOUBLURES_DB_PORT
-              value: {{ .Values.postgresql.port }}
+              value: "{{ .Values.postgresql.port }}"
           {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
