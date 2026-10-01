@@ -33,11 +33,11 @@ spec:
           command: ["psql", "-v", "ON_ERROR_STOP=1", "-f", "/sql/premier_roles.sql"]
           env:
             - name: PGHOST
-              value: {{ .Values.postgresql.host }}
+              value: "{{ .Values.postgresql.host }}"
             - name: PGPORT
-              value: {{ .Values.postgresql.port }}
+              value: "{{ .Values.postgresql.port }}"
             - name: PGDATABASE
-              value: {{ .Values.postgresql.premierRoles.dbName }}
+              value: "{{ .Values.postgresql.premierRoles.dbName }}"
             - name: PGUSER
               valueFrom:
                 secretKeyRef:
@@ -95,11 +95,11 @@ spec:
           command: ["psql", "-v", "ON_ERROR_STOP=1", "-f", "/sql/doublure.sql"]
           env:
             - name: PGHOST
-              value: {{ .Values.postgresql.host }}
+              value: "{{ .Values.postgresql.host }}"
             - name: PGPORT
-              value: {{ .Values.postgresql.port }}
+              value: "{{ .Values.postgresql.port }}"
             - name: PGDATABASE
-              value: {{ .Values.postgresql.doublures.dbName }}
+              value: "{{ .Values.postgresql.doublures.dbName }}"
             - name: PGUSER
               valueFrom:
                 secretKeyRef:
