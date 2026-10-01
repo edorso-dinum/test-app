@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: docker.io/heroinedor/test-app-website
   pullPolicy: IfNotPresent
-  tag: "0.1"
+  tag: "0.2"
 
 imagePullSecrets: []
 nameOverride: ""
