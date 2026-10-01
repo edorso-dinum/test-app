@@ -55,55 +55,37 @@ spec:
                   key: {{ .Values.django.secretKeyExistingSecretKey }}
             {{- end }}
             - name: PREMIER_ROLES_DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.postgresql.premierRoles.existingSecret }}
-                  key: dbname
+              value: {{ .Values.postgresql.premierRoles.dbName }}
             - name: PREMIER_ROLES_DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.postgresql.premierRoles.existingSecret }}
-                  key: user
+                  name: {{ .Values.postgresql.premierRoles.roleExistingSecret }}
+                  key: username
             - name: PREMIER_ROLES_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.postgresql.premierRoles.existingSecret }}
+                  name: {{ .Values.postgresql.premierRoles.roleExistingSecret }}
                   key: password
             - name: PREMIER_ROLES_DB_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.postgresql.premierRoles.existingSecret }}
-                  key: host
+              valueFrom: {{ .Values.postgresql.host }}
             - name: PREMIER_ROLES_DB_PORT
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.postgresql.premierRoles.existingSecret }}
-                  key: port
+              valueFrom: {{ .Values.postgresql.port }}
             - name: DOUBLURES_DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.postgresql.doublures.existingSecret }}
-                  key: dbname
+              value: {{ .Values.postgresql.doublures.dbName }}
             - name: DOUBLURES_DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.postgresql.doublures.existingSecret }}
-                  key: user
+                  name: {{ .Values.postgresql.doublures.roleExistingSecret }}
+                  key: username
             - name: DOUBLURES_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.postgresql.doublures.existingSecret }}
                   key: password
             - name: DOUBLURES_DB_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.postgresql.doublures.existingSecret }}
-                  key: host
+              value: {{ .Values.postgresql.host }}
             - name: DOUBLURES_DB_PORT
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.postgresql.doublures.existingSecret }}
-                  key: port
+              value: {{ .Values.postgresql.port }}
           {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}

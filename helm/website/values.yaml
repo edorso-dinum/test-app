@@ -71,10 +71,14 @@ django:
 # `existingSecret` is expected to be a CNPG-generated "app" Secret, exposing the
 # standard keys: host, port, dbname, user, password.
 postgresql:
+  host: "cnpg-cluster-tchap-pgbench-ro.tchap-pgbench.svc"
+  port: 5432
   premierRoles:
-    existingSecret: "tchap-pgbench-stars-secret"
+    roleExistingSecret: "tchap-pgbench-stars-secret"
+    dbName: "stars"
   doublures:
-    existingSecret: "tchap-pgbench-doublures-secret"
+    roleExistingSecret: "tchap-pgbench-doublures-secret"
+    dbName: "doublures"
 
 # Migration Job(s) loading the seed data from `data/*.sql` into the CNPG databases,
 # run as Helm hooks before the website Deployment is (re)installed/upgraded.

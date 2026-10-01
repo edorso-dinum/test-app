@@ -33,29 +33,20 @@ spec:
           command: ["psql", "-v", "ON_ERROR_STOP=1", "-f", "/sql/premier_roles.sql"]
           env:
             - name: PGHOST
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.postgresql.premierRoles.existingSecret }}
-                  key: host
+              value: {{ .Values.postgresql.host }}
             - name: PGPORT
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.postgresql.premierRoles.existingSecret }}
-                  key: port
+              value: {{ .Values.postgresql.port }}
             - name: PGDATABASE
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.postgresql.premierRoles.existingSecret }}
-                  key: dbname
+              value: {{ .Values.postgresql.premierRoles.dbName }}
             - name: PGUSER
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.postgresql.premierRoles.existingSecret }}
+                  name: {{ .Values.postgresql.premierRoles.roleExistingSecret }}
                   key: user
             - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.postgresql.premierRoles.existingSecret }}
+                  name: {{ .Values.postgresql.premierRoles.roleExistingSecret }}
                   key: password
           volumeMounts:
             - name: migration-sql
@@ -104,29 +95,20 @@ spec:
           command: ["psql", "-v", "ON_ERROR_STOP=1", "-f", "/sql/doublure.sql"]
           env:
             - name: PGHOST
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.postgresql.doublures.existingSecret }}
-                  key: host
+              value: {{ .Values.postgresql.host }}
             - name: PGPORT
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.postgresql.doublures.existingSecret }}
-                  key: port
+              value: {{ .Values.postgresql.port }}
             - name: PGDATABASE
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.postgresql.doublures.existingSecret }}
-                  key: dbname
+              value: {{ .Values.postgresql.doublures.dbName }}
             - name: PGUSER
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.postgresql.doublures.existingSecret }}
+                  name: {{ .Values.postgresql.doublures.roleExistingSecret }}
                   key: user
             - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.postgresql.doublures.existingSecret }}
+                  name: {{ .Values.postgresql.doublures.roleExistingSecret }}
                   key: password
           volumeMounts:
             - name: migration-sql
