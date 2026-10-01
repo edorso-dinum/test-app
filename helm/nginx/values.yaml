@@ -52,8 +52,7 @@ readinessProbe:
   initialDelaySeconds: 2
   periodSeconds: 5
 
-nodeSelector:
-  node-role.kubernetes.io/control-plane: ""
+nodeSelector: {}
 
 tolerations: []
 
