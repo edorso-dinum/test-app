@@ -63,6 +63,8 @@ spec:
               value: {{ .value | quote }}
               {{- end }}
             {{- end }}
+          resources:
+            {{- toYaml . | nindent 12 }}
         - name: migrate-doublures
           {{- with .Values.securityContext }}
           securityContext:
@@ -83,6 +85,8 @@ spec:
               value: {{ .value | quote }}
               {{- end }}
             {{- end }}
+          resources:
+            {{- toYaml . | nindent 12 }}
       containers:
         - name: {{ .Chart.Name }}
           {{- with .Values.securityContext }}
