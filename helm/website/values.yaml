@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: docker.io/heroinedor/test-app-website
   pullPolicy: IfNotPresent
-  tag: "0.2"
+  tag: "0.3"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -71,7 +71,7 @@ django:
 # `existingSecret` is expected to be a CNPG-generated "app" Secret, exposing the
 # standard keys: host, port, dbname, user, password.
 postgresql:
-  host: "cnpg-cluster-tchap-pgbench-ro.tchap-pgbench.svc"
+  host: "cnpg-cluster-tchap-pgbench-rw.tchap-pgbench.svc"
   port: 5432
   premierRoles:
     roleExistingSecret: "tchap-pgbench-stars-secret"
